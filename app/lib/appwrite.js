@@ -61,6 +61,7 @@ export const createUser = async (email, password, username) => {
 export const signIn = async (email, password) => {
   try {
     const session = await account.createEmailPasswordSession(email, password);
+    await account.get();
     return session;
   } catch (error) {
     throw new Error(error);
@@ -69,18 +70,30 @@ export const signIn = async (email, password) => {
 
 export const getCurrentUser = async () => {
   try {
-    const currentAccount = account.get();
+    const currentAccount = await account.get();
     if (!currentAccount) throw Error;
-
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", currentAccount.$id)]
     );
-
+    console.log(currentUser.documents[0]);
     if (!currentAccount) throw Error;
     return currentUser.documents[0];
   } catch (error) {
+    console.log("ddd");
     console.log(error);
+  }
+};
+
+export const getAllPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.videoCollectionId
+    );
+    return posts.documents;
+  } catch (error) {
+    throw new Error(error);
   }
 };
