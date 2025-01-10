@@ -3,14 +3,7 @@ import React, { useState } from "react";
 import { icons } from "../constants";
 import { Video, ResizeMode } from "expo-av";
 
-const VideoCard = ({
-  video: {
-    title,
-    thumbnail,
-    video,
-    users: { username, avatars },
-  },
-}) => {
+const VideoCard = ({ video: { title, thumbnail, video, users } }) => {
   const [play, setPlay] = useState(false);
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -18,7 +11,7 @@ const VideoCard = ({
         <View className="justify-center items-center flex-row flex-1">
           <View className="w-[46px] h-[46px] rounded-lg border border-secondary justify-center items-center">
             <Image
-              source={{ uri: avatars }}
+              source={{ uri: users?.avatars }}
               className="w-full h-full rounded-lg"
               resizeMode="cover"
             />
@@ -34,7 +27,7 @@ const VideoCard = ({
               className="text-xs text-gray-100 font-pregular"
               numberOfLines={1}
             >
-              {username}
+              {users?.username}
             </Text>
           </View>
         </View>

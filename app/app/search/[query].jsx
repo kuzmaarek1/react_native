@@ -1,18 +1,9 @@
-import {
-  Text,
-  View,
-  FlatList,
-  Image,
-  RefreshControl,
-  Alert,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Text, View, FlatList } from "react-native";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
-import { images } from "../../constants";
 import { searchPosts } from "../../lib/appwrite";
 import SearchInput from "../../components/SearchInput";
-import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
 import useAppwrite from "../../context/useAppwrite";
 import VideoCard from "../../components/VideoCard";
