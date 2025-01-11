@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Video, ResizeMode } from "expo-av";
+//import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { router } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import FormField from "../../components/FormField";
@@ -62,6 +63,17 @@ const Create = () => {
     }
   };
 
+  const player = useVideoPlayer(
+    form.video ? form.video.uri : null,
+    (player) => {
+      player.loop = false;
+    }
+  );
+
+  const handleRemoveVideo = () => {
+    setForm({ ...form, video: null });
+  };
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
@@ -74,17 +86,32 @@ const Create = () => {
           otherStyles="mt-10"
         />
         <View className="mt-7 space-y-2">
-          <Text className="text-base text-gray-100 font-pmedium">
-            Upload Video
-          </Text>
+          <View className="w-full flex-row justify-between">
+            <Text className="w-30 text-base text-gray-100 font-pmedium">
+              Upload Video
+            </Text>
+            {form.video && (
+              <TouchableOpacity
+                className="w-30 px-2 h-5 bg-red-500 rounded-2xl justify-center items-center"
+                onPress={handleRemoveVideo}
+              >
+                <Text className="text-white text-[10px] font-pmedium justify-center items-center">
+                  Remove video
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
           <TouchableOpacity onPress={() => openPicker("video")}>
             {form.video ? (
-              <Video
-                source={{ uri: form.video.uri }}
-                className="w-full h-64 rounded-2xl"
-                useNativeControls
-                resizeMode={ResizeMode.COVER}
-                isLooping
+              <VideoView
+                style={{
+                  width: "100%",
+                  height: 250,
+                  borderRadius: 12,
+                }}
+                player={player}
+                //allowsFullscreen
+                //allowsPictureInPicture
               />
             ) : (
               <View className="w-full h-40 px-4 bg-black-100 rounded-2xl justify-center items-center">

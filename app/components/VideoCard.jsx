@@ -1,10 +1,22 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { useEvent } from "expo";
 import React, { useState } from "react";
 import { icons } from "../constants";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 
-const VideoCard = ({ video: { title, thumbnail, video, users } }) => {
-  const [play, setPlay] = useState(false);
+const VideoCard = ({ video: { title, thumbnail, video }, users }) => {
+  const [isFirstPlay, setIsFirstPlay] = useState(true);
+  const player = useVideoPlayer(video, (player) => {
+    player.loop = true;
+  });
+
+  const handlePlay = () => {
+    if (isFirstPlay) {
+      setIsFirstPlay(false);
+    }
+    player.play();
+  };
+
   return (
     <View className="flex-col items-center px-4 mb-14">
       <View className="flex-row gap-3 items-start">
@@ -35,37 +47,38 @@ const VideoCard = ({ video: { title, thumbnail, video, users } }) => {
           <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
         </View>
       </View>
-      {play ? (
-        <Video
-          source={{ uri: video }}
-          className="w-full h-60 rounded-xl mt-3"
-          resizeMode={ResizeMode.CONTAIN}
-          useNativeControls
-          shouldPlay
-          onPlaybackStatusUpdate={(status) => {
-            if (status.didJustFinish) {
-              setPlay(false);
-            }
-          }}
-        />
-      ) : (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() => setPlay(true)}
-          className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
-        >
-          <Image
-            source={{ uri: thumbnail }}
-            className="w-full h-full rounded-xl mt-3"
-            resizeMethod="cover"
+      <View className="w-full h-60 relative">
+        {isFirstPlay ? (
+          <TouchableOpacity
+            className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
+            activeOpacity={0.7}
+            onPress={handlePlay}
+          >
+            <Image
+              source={{ uri: thumbnail }}
+              className="w-full h-full rounded-xl mt-3"
+              resizeMethod="cover"
+            />
+            <Image
+              source={icons.play}
+              className="w-12 h-12 absolute"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        ) : (
+          <VideoView
+            style={{
+              width: "100%",
+              height: 240,
+              borderRadius: 12,
+              marginTop: 12,
+            }}
+            player={player}
+            allowsFullscreen
+            allowsPictureInPicture
           />
-          <Image
-            source={icons.play}
-            className="w-12 h-12 absolute"
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      )}
+        )}
+      </View>
     </View>
   );
 };
